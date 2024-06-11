@@ -80,6 +80,26 @@ const redisService = {
       });
     } catch (error) {}
   },
+  updateUser: async ({ key, value }) => {
+    try {
+      const entries = Object.entries(value);
+      const arrayProperty = [];
+      entries.forEach(([key, value]) => {
+        arrayProperty.push(key);
+        arrayProperty.push(value);
+      });
+      return new Promise((resolve, reject) => {
+        client.exists(key, (err, rs) => {
+          if (err) return reject(err);
+          if (rs == 1) {
+            client.hset(key, arrayProperty, (err, rs) => {
+              return !err ? resolve(rs) : reject(err);
+            });
+          } else return resolve({ msg: "user does not existed!" });
+        });
+      });
+    } catch (error) {}
+  },
 };
 
 module.exports = redisService;

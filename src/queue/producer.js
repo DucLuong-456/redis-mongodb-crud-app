@@ -2,7 +2,6 @@ const amqplib = require("amqplib");
 const mongoose = require("mongoose");
 const amqp_lib_cloud = process.env.AMPQ_LIB_CLOUD;
 const amqp_lib_docker = "";
-const mongoUri = process.env.MONGO_URI;
 const UserModel = require("../models/user.model");
 const sendQueue = async () => {
   try {

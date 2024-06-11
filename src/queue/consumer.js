@@ -29,7 +29,8 @@ const receiveQueue = async () => {
   }
 
   function handleEvent(event) {
-    const { operationType, fullDocument, documentKey } = event;
+    const { operationType, fullDocument, documentKey, updateDescription } =
+      event;
     switch (operationType) {
       case "insert":
         async function addUserRedis(fullDocument) {
@@ -49,14 +50,18 @@ const receiveQueue = async () => {
         addUserRedis(fullDocument);
         break;
       case "update":
-        client.set(
-          documentKey._id.toString(),
-          JSON.stringify(fullDocument),
-          (err, reply) => {
-            if (err) console.error(err);
-            console.log(`Document ${operationType}d in Redis:`, reply);
+        async function updateUserRedis(documentKey, updateDescription) {
+          const key = documentKey._id;
+          try {
+            await redisService.updateUser({
+              key,
+              value: updateDescription.updatedFields,
+            });
+          } catch (error) {
+            console.log(error);
           }
-        );
+        }
+        updateUserRedis(documentKey, updateDescription);
         break;
       case "delete":
         client.del(documentKey._id.toString(), (err, reply) => {
