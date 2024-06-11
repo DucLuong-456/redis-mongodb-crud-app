@@ -1,0 +1,61 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: ./
+    container_name: node_app
+    ports:
+      - "3000:3000"
+    environment:
+      - REDIS_HOST=redis
+      - RABBITMQ_HOST=rabbitmq
+      - MONGO_HOST=mongodb
+      - MONGO_URI=mongodb://mongo:27017/${MONGO_DB_NAME}
+    depends_on:
+      - redis
+      - rabbitmq
+      - mongodb
+    networks:
+      - custom_network
+
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - custom_network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - custom_network
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+
+  mongodb:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - custom_network
+    volumes:
+      - mongo:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGO_DB_NAME}
+
+networks:
+  custom_network:
+    driver: bridge
+
+volumes:
+  rabbitmq:
+    driver: local
+  mongo:
+    driver: local
