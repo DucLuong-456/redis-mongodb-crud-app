@@ -17,3 +17,4 @@ app.listen(port, () => {
 });
 
 require("./src/queue/producer");
+require("./src/queue/consumer");

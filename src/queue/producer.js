@@ -4,10 +4,6 @@ const amqp_lib_cloud = process.env.AMPQ_LIB_CLOUD;
 const amqp_lib_docker = "";
 const mongoUri = process.env.MONGO_URI;
 const UserModel = require("../models/user.model");
-// Kết nối đến MongoDB
-// mongoose.connect(mongoUri);
-// const db = mongoose.connection;
-
 const sendQueue = async () => {
   try {
     //1. create connect
@@ -23,7 +19,6 @@ const sendQueue = async () => {
     //5. send to queue
     // Lắng nghe các thay đổi từ MongoDB
     const changeStream = UserModel.watch();
-
     changeStream.on("change", async (change) => {
       console.log("Change detected:", change);
       // Gửi sự kiện tới RabbitMQ
